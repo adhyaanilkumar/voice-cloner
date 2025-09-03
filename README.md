@@ -1,4 +1,4 @@
-# 🎙️ Voice Cloner
+# 🎙️ Voice Cloning with Emotion Control
 
 This project implements a **deep learning–based voice cloning system** that synthesizes speech in a target speaker’s voice. Built using **Tacotron 2** (text → mel spectrogram) and **WaveGlow** (mel → waveform), it converts text into natural-sounding audio.  
 
@@ -17,15 +17,13 @@ A key feature is **emotion control**, allowing the cloned voice to speak with di
 ---
 
 ## 📂 Project Structure
-```bash
 voice-cloning-project/
-│── data/             # Datasets (LJSpeech, EmoV-DB, RAVDESS, etc.)
-│── preprocessing/    # Audio cleaning + mel extraction scripts
-│── models/           # Tacotron2 + WaveGlow checkpoints
-│── notebooks/        # Colab/Jupyter notebooks
-│── app/              # Gradio/Streamlit demo app
-│── README.md         # Project description
-
+│── data/ # Datasets (LJSpeech, EmoV-DB, RAVDESS, etc.)
+│── preprocessing/ # Audio cleaning + mel extraction scripts
+│── models/ # Tacotron2 + WaveGlow checkpoints
+│── notebooks/ # Colab/Jupyter notebooks
+│── app/ # Gradio/Streamlit demo app
+│── README.md # Project description
 
 ---
 
@@ -76,3 +74,5 @@ Any use of cloned voices must have **explicit consent** of the speaker.
 ---
 
 ✨ *Developed as a 7th Semester B.Tech CSE Project*  
+
+
