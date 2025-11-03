@@ -18,14 +18,25 @@ import torch  # Only needed for optional emotion recognition
 import shutil
 
 # Set up logging - DEBUG level for troubleshooting
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('voice_cloner.log', encoding='utf-8')
-    ]
-)
+# In serverless environments (like Vercel), file logging is not available
+is_serverless = os.getenv('VERCEL') or os.getenv('LAMBDA_TASK_ROOT') or not os.path.exists('/tmp')
+if is_serverless:
+    # Serverless environment - only use StreamHandler
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[logging.StreamHandler()]
+    )
+else:
+    # Local environment - use both StreamHandler and FileHandler
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler('voice_cloner.log', encoding='utf-8')
+        ]
+    )
 logger = logging.getLogger(__name__)
 
 # Import our models
@@ -110,9 +121,16 @@ async def startup_event():
             logger.error(f"Failed to initialize ElevenLabs service: {e}")
             raise
         
-        # Initialize database
-        init_database()
-        logger.info("Database initialized successfully")
+        # Initialize database (skip in serverless if SQLite is not available)
+        try:
+            init_database()
+            logger.info("Database initialized successfully")
+        except Exception as db_error:
+            if is_serverless:
+                logger.warning(f"Database initialization skipped in serverless environment: {db_error}")
+            else:
+                logger.error(f"Database initialization failed: {db_error}")
+                raise
         
         # Optional: Initialize audio processor for duration calculation only
         try:
@@ -487,9 +505,12 @@ async def clone_voice_with_voice_id(
             use_enhancement=use_enhancement_value
         )
         
-        # Save audio to file
-        output_dir = Path("generated_audio")
-        output_dir.mkdir(exist_ok=True)
+        # Save audio to file (use /tmp in serverless environments)
+        if is_serverless:
+            output_dir = Path("/tmp/generated_audio")
+        else:
+            output_dir = Path("generated_audio")
+        output_dir.mkdir(exist_ok=True, parents=True)
         
         output_filename = f"cloned_voice_{voice_id[:8]}_{int(time.time())}.mp3"
         output_path = output_dir / output_filename
@@ -608,7 +629,11 @@ async def clone_voice(
 @app.get("/download/{filename}")
 async def download_audio(filename: str):
     """Download generated audio file"""
-    file_path = Path("generated_audio") / filename
+    # Use /tmp in serverless environments
+    if is_serverless:
+        file_path = Path("/tmp/generated_audio") / filename
+    else:
+        file_path = Path("generated_audio") / filename
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
     

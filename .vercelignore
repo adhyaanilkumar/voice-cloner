@@ -1,0 +1,61 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+voice_cloner.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+voice_cloner.db
+
+# Generated files
+generated_audio/
+*.mp3
+*.wav
+
+# Environment files (should be set in Vercel dashboard)
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Model files (if any)
+models/*.pth
+models/*.pt
+models/*.h5
+
+# Data
+data/
+*.csv
+*.json
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+

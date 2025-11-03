@@ -10,7 +10,14 @@ import os
 from typing import Generator
 
 # Database configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./voice_cloner.db")
+# In serverless environments, use /tmp for SQLite or a serverless database
+is_serverless = os.getenv('VERCEL') or os.getenv('LAMBDA_TASK_ROOT')
+if is_serverless:
+    # Use /tmp for SQLite in serverless (note: SQLite is not ideal for serverless)
+    # Consider using a proper serverless database like PostgreSQL
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:////tmp/voice_cloner.db")
+else:
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./voice_cloner.db")
 
 # Create engine
 engine = create_engine(
