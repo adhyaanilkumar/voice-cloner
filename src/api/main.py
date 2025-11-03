@@ -44,8 +44,15 @@ from src.services.elevenlabs_service import ElevenLabsService, create_elevenlabs
 app = FastAPI(title="Voice Cloner API", version="1.0.0")
 
 # Mount static files
+# Get project root directory (parent of src directory)
+project_root = Path(__file__).parent.parent.parent
+static_dir = project_root / "web_dashboard" / "static"
 try:
-    app.mount("/static", StaticFiles(directory="web_dashboard/static"), name="static")
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+        logger.info(f"Static files mounted from: {static_dir}")
+    else:
+        logger.warning(f"Static directory not found: {static_dir}")
 except RuntimeError:
     pass  # Already mounted
 
@@ -148,12 +155,18 @@ async def startup_event():
 
 def serve_page(page_name: str):
     """Helper function to serve HTML pages"""
-    page_path = Path(f"web_dashboard/{page_name}.html")
+    # Get project root directory (parent of src directory)
+    project_root = Path(__file__).parent.parent.parent
+    page_path = project_root / "web_dashboard" / f"{page_name}.html"
+    
+    logger.debug(f"Serving page: {page_name}, path: {page_path}, exists: {page_path.exists()}")
+    
     if page_path.exists():
         with open(page_path, 'r', encoding='utf-8') as f:
             content = f.read()
             return HTMLResponse(content=content, media_type="text/html")
-    return HTMLResponse(content=f"<h1>Page {page_name} not found</h1>", media_type="text/html")
+    logger.error(f"Page not found: {page_path}")
+    return HTMLResponse(content=f"<h1>Page {page_name} not found</h1><p>Path: {page_path}</p>", media_type="text/html")
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
