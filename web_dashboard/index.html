@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Cloner - Home</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .navigation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .nav-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .nav-card i {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .nav-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        .nav-card p {
+            color: #666;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-microphone"></i> Voice Cloner</h1>
+            <p>Clone voices with ElevenLabs AI</p>
+        </div>
+
+        <div class="navigation-grid">
+            <a href="/create-voice" class="nav-card">
+                <i class="fas fa-plus-circle"></i>
+                <h2>Create Voice</h2>
+                <p>Create a new voice from an audio file or URL</p>
+            </a>
+
+            <a href="/manage-voices" class="nav-card">
+                <i class="fas fa-folder-open"></i>
+                <h2>Manage Voices</h2>
+                <p>View and manage your saved voices from ElevenLabs</p>
+            </a>
+
+            <a href="/clone-voice" class="nav-card">
+                <i class="fas fa-magic"></i>
+                <h2>Clone Voice</h2>
+                <p>Generate speech using your saved voices</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

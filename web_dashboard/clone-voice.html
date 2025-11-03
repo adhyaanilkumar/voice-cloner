@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone Voice - Voice Cloner</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .nav-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .voice-select-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .voice-select-section h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-magic"></i> Clone Voice</h1>
+            <p>Generate speech using your saved voices</p>
+        </div>
+
+        <div class="main-content" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+            <div class="card">
+                <h2><i class="fas fa-magic"></i> Generate Cloned Voice</h2>
+                <form id="voiceCloneForm">
+                    <div class="voice-select-section">
+                        <h3>Select Voice</h3>
+                        <div class="form-group">
+                            <label for="voiceSelect">Choose a Voice:</label>
+                            <select id="voiceSelect" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <option value="">Loading voices...</option>
+                            </select>
+                            <small style="color: #666;">Select a voice from your ElevenLabs account</small>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <a href="/manage-voices" style="color: #667eea; text-decoration: none;">
+                                <i class="fas fa-folder-open"></i> Manage Voices
+                            </a>
+                            <span style="margin: 0 10px; color: #ccc">|</span>
+                            <a href="/create-voice" style="color: #667eea; text-decoration: none;">
+                                <i class="fas fa-plus-circle"></i> Create New Voice
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="textInput">Text to Synthesize:</label>
+                        <textarea id="textInput" placeholder="Enter the text you want to synthesize in the cloned voice..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3 style="margin-top: 20px; margin-bottom: 15px;">Voice Parameters (Eleven v3 Alpha)</h3>
+                        
+                        <div class="form-group">
+                            <label for="stabilitySelect">Stability:</label>
+                            <select id="stabilitySelect">
+                                <option value="natural" selected>Natural (Balanced)</option>
+                                <option value="creative">Creative (More Expressive)</option>
+                                <option value="robust">Robust (High Stability)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="enhancementCheck" checked style="width: auto; margin-right: 10px;">
+                                <span>v3 Enhancement</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class="fas fa-play"></i> Generate Cloned Voice
+                    </button>
+                </form>
+                
+                <div class="progress-bar" id="cloneProgress" style="display: none;">
+                    <div class="progress-fill" id="cloneProgressFill"></div>
+                </div>
+                
+                <div class="loading" id="cloneLoading" style="display: none;">
+                    <i class="fas fa-spinner"></i>
+                    <p>Generating cloned voice...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results" id="results" style="display: none; max-width: 800px; margin: 40px auto 0;">
+            <h3><i class="fas fa-music"></i> Generated Audio</h3>
+            
+            <div class="result-item">
+                <span class="result-label">Voice ID Used:</span>
+                <span class="result-value" id="usedVoiceId">-</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">Processing Time:</span>
+                <span class="result-value" id="processingTime">-</span>
+            </div>
+            
+            <div class="audio-player" id="audioPlayer" style="margin-top: 20px;">
+                <audio controls id="generatedAudio">
+                    Your browser does not support the audio element.
+                </audio>
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-secondary" id="downloadBtn">
+                        <i class="fas fa-download"></i> Download Audio
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error/Success Messages -->
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+    </div>
+
+    <script src="/static/clone-voice.js"></script>
+</body>
+</html>
+
