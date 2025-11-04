@@ -4,7 +4,7 @@ FastAPI Backend for Voice Cloning System
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse, Response
 from fastapi.staticfiles import StaticFiles
 from io import BytesIO
 from pydantic import BaseModel
@@ -608,13 +608,23 @@ async def clone_voice(
             logger.error("ERROR: Audio data is empty! This should not happen.")
             raise HTTPException(status_code=500, detail="Received empty audio data from ElevenLabs API")
         
-        # Return audio directly as StreamingResponse
-        audio_stream = BytesIO(audio_data)
-        return StreamingResponse(
-            audio_stream,
+        # Validate audio size (max 50MB to prevent buffer overflow on Vercel)
+        max_size = 50 * 1024 * 1024  # 50MB
+        if len(audio_data) > max_size:
+            logger.error(f"Audio data too large: {len(audio_data)} bytes (max: {max_size} bytes)")
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Audio data too large ({len(audio_data) / (1024*1024):.2f}MB). Maximum allowed: 50MB."
+            )
+        
+        # Return audio directly as Response (not StreamingResponse) to avoid buffer issues on Vercel
+        # StreamingResponse with BytesIO can cause buffer accumulation in Node.js layer on Vercel
+        return Response(
+            content=audio_data,
             media_type="audio/mpeg",
             headers={
-                "Content-Disposition": f'attachment; filename="cloned_voice_{voice_id[:8]}.mp3"'
+                "Content-Disposition": f'attachment; filename="cloned_voice_{voice_id[:8]}.mp3"',
+                "Content-Length": str(len(audio_data))
             }
         )
         
